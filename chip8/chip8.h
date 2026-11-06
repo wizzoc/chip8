@@ -4,9 +4,13 @@
 #include <cstdint>
 #include <array>
 #include <string>
+#include <random>
 
 class Chip8
 {
+
+    // random number generator
+    std::mt19937 rng{ std::random_device{}() };
     // stack
     std::array<uint16_t, 16> stack{};
 
@@ -56,7 +60,7 @@ public:
     void debugDump() const;
     void dumpMemory(uint16_t pos, int count) const;
     void renderDisplay() const;
-
+    void printUnknownOpcode(uint16_t opcode) const;
 };
 
 #endif

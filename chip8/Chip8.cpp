@@ -84,6 +84,11 @@ void Chip8::renderDisplay() const
 	}
 }
 
+void Chip8::printUnknownOpcode(uint16_t opcode) const
+{
+	std::cout << "Unknown opcode " << std::hex << opcode << std::dec << " at " << pc - 2 << '\n';
+}
+
 void Chip8::cycle()
 {
 	uint16_t opcode{ static_cast<uint16_t>((mem[pc] * 256) + mem[pc + 1]) };
@@ -119,7 +124,7 @@ void Chip8::cycle()
 			break;
 		default:
 			// either unknown opcode or call machine-code routine opcode, unimplemented
-			std::cout << "Unknown operation: " << std::hex << opcode << std::dec << '\n';
+			printUnknownOpcode(opcode);
 			break;
 		}
 		break;
@@ -159,7 +164,7 @@ void Chip8::cycle()
 		// if last digit isn't 0, not a valid instruction
 		if (N != 0)
 		{
-			std::cout << "Invalid instruction at " << std::hex << pc - 2 << std::dec << '\n';
+			printUnknownOpcode(opcode);
 			break;
 		}
 
@@ -234,7 +239,7 @@ void Chip8::cycle()
 			V[0xF] = flag;
 			break;
 		default:
-			std::cout << "Unknown opcode at " << std::hex << pc - 2 << std::dec << '\n';
+			printUnknownOpcode(opcode);
 			break;
 		}
 	}
@@ -243,7 +248,7 @@ void Chip8::cycle()
 		// if last digit isn't 0, not a valid instruction
 		if (N != 0)
 		{
-			std::cout << "Invalid instruction at " << std::hex << pc - 2 << std::dec << '\n';
+			printUnknownOpcode(opcode);
 			break;
 		}
 		// skip if V[second digit] does not equal V[third digit]
@@ -254,6 +259,14 @@ void Chip8::cycle()
 	case 0xA:
 		// set address register
 		I = NNN;
+		break;
+	case 0xB:
+		// jump to last three digits + what's in register 0
+		pc = NNN + V[0];
+		break;
+	case 0xC:
+		// generate random number from rng engine and bitwise AND with last two digits
+		V[X] = (rng() % 256) & NN;
 		break;
 	case 0xD:
 	{
@@ -267,7 +280,7 @@ void Chip8::cycle()
 		V[0xF] = 0;
 
 		// N many rows, always 8 columns (8 bits)
-		for (int row{ 0 }; row <= (opcode % 16) - 1; row++)
+		for (int row{ 0 }; row < N; row++)
 		{
 			int py{ y + row };
 			uint8_t placeValue{ 128 };
@@ -294,8 +307,18 @@ void Chip8::cycle()
 
 		break;
 	}
+	case 0xF:
+	{
+		switch (NN)
+		{
+		default:
+			printUnknownOpcode(opcode);
+			break;
+		}
+		break;
+	}
 	default:
-		std::cout << "Unknown operation: " << std::hex << opcode << std::dec << '\n';
+		printUnknownOpcode(opcode);
 		break;
 	}
 }

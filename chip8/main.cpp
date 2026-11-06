@@ -24,7 +24,7 @@ int main()
     // chip8::cycle test loop below
     // TODO: remove
 
-    for (int i{ 0 }; i < 150; i++)
+    for (int i{ 0 }; i < 200; i++)
     {
         chip8.cycle();
     }

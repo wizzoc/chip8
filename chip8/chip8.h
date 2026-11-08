@@ -61,6 +61,7 @@ public:
     void dumpMemory(uint16_t pos, int count) const;
     void renderDisplay() const;
     void printUnknownOpcode(uint16_t opcode) const;
+    void tickTimers();
 };
 
 #endif

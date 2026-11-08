@@ -89,6 +89,15 @@ void Chip8::printUnknownOpcode(uint16_t opcode) const
 	std::cout << "Unknown opcode " << std::hex << opcode << std::dec << " at " << pc - 2 << '\n';
 }
 
+void Chip8::tickTimers()
+{
+	if (st > 0)
+		st--;
+
+	if (dt > 0)
+		dt--;
+}
+
 void Chip8::cycle()
 {
 	uint16_t opcode{ static_cast<uint16_t>((mem[pc] * 256) + mem[pc + 1]) };
@@ -311,6 +320,18 @@ void Chip8::cycle()
 	{
 		switch (NN)
 		{
+			case 0x07:
+				// copy delay timer into register X
+				V[X] = dt;
+				break;
+				// set delay timer to register X
+			case 0x15:
+				dt = V[X];
+				break;
+			case 0x18:
+				// set sound timer to register X
+				st = V[X];
+				break;
 			case 0x29:
 				// set I to where register X's font digit starts
 				I = FONT_START + ((V[X] % 16) * 5);

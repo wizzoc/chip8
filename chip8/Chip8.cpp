@@ -311,6 +311,23 @@ void Chip8::cycle()
 	{
 		switch (NN)
 		{
+			case 0x29:
+				// set I to where register X's font digit starts
+				I = FONT_START + ((V[X] % 16) * 5);
+				break;
+			case 0x33:
+				// take the value in register X and put its HUNDREDS (line 1), TENS (line 2), AND ONES (line 3) place value into memory starting at the index register
+				mem[I] = (V[X] / 100);
+				mem[I + 1] = (V[X] / 10) % 10;
+				mem[I + 2] = V[X] % 10;
+				break;
+			case 0x55:
+				// copy registers 0 to X into memory (opposite of case 0x65) starting at index register
+				for (int i{ 0 }; i <= X; i++)
+				{
+					mem[I + i] = V[i];
+				}
+				break;
 			case 0x65:
 				// copy from memory into registers 0 through X inclusive starting at index register
 				for (int i{ 0 }; i <= X; i++)

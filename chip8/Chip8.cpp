@@ -311,9 +311,20 @@ void Chip8::cycle()
 	{
 		switch (NN)
 		{
-		default:
-			printUnknownOpcode(opcode);
-			break;
+			case 0x65:
+				// copy from memory into registers 0 through X inclusive starting at index register
+				for (int i{ 0 }; i <= X; i++)
+				{
+					V[i] = mem[I + i];
+				}
+				break;
+			case 0x1E:
+				// add register X to index register
+				I += V[X];
+				break;
+			default:
+				printUnknownOpcode(opcode);
+				break;
 		}
 		break;
 	}

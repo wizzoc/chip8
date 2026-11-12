@@ -21,6 +21,11 @@ int main()
         std::getline(std::cin, input);
     }
 
+    // clear terminal
+    std::cout << "\033[2J";
+
+    std::cout << "\033[?25l";
+
     // begin infinite loop to render ~60 frames per second
     while (true)
     {

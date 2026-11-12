@@ -11,6 +11,7 @@ class Chip8
 
     // random number generator
     std::mt19937 rng{ std::random_device{}() };
+
     // stack
     std::array<uint16_t, 16> stack{};
 

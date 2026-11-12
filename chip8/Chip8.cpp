@@ -68,20 +68,27 @@ void Chip8::debugDump() const
 
 void Chip8::renderDisplay() const
 {
-	std::cout << "\033[2J\033[H";
+	std::string frame{};
+	
+	// reserving space so it doesn't need to change size mid-function
+	// 32 rows, 128 chars per row (+1 for newline), 3 for escape code
+	frame.reserve(32 * 129 + 3);
+	frame += "\033[H";
 
 	for (int row{ 0 }; row < 32; row++)
 	{
 		for (int col{ 0 }; col < 64; col++)
 		{
 			if (display[(row * 64) + col])
-				std::cout << "##";
+				frame += "##";
 			else
-				std::cout << "  ";
+				frame += "  ";
 		}
 
-		std::cout << '\n';
+		frame += '\n';
 	}
+
+	std::cout << frame << std::flush;
 }
 
 void Chip8::printUnknownOpcode(uint16_t opcode) const

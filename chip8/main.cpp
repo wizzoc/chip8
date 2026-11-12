@@ -2,6 +2,8 @@
 #include <cstdint>
 #include <iostream>
 #include <string>
+#include <thread>
+#include <chrono>
 #include "chip8.h"
 
 int main()
@@ -19,18 +21,18 @@ int main()
         std::getline(std::cin, input);
     }
 
-    chip8.dumpMemory(0x200, 16);
-
-    // chip8::cycle test loop below
-    // TODO: remove
-
-    for (int i{ 0 }; i < 200; i++)
+    // begin infinite loop to render ~60 frames per second
+    while (true)
     {
-        chip8.cycle();
-    }
+        for (int i{ 0 }; i < 10; i++)
+        {
+            chip8.cycle();
+        }
 
-    chip8.renderDisplay();
-    chip8.debugDump();
+        chip8.tickTimers();
 
-    std::cin.get();
+        chip8.renderDisplay();
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(16));
+   }
 }

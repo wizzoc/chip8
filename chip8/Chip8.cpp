@@ -105,6 +105,11 @@ void Chip8::tickTimers()
 		dt--;
 }
 
+void Chip8::setKeyHeld(int index, bool held)
+{
+	inputsHeld[index] = held;
+}
+
 void Chip8::cycle()
 {
 	uint16_t opcode{ static_cast<uint16_t>((mem[pc] * 256) + mem[pc + 1]) };
@@ -323,6 +328,28 @@ void Chip8::cycle()
 
 		break;
 	}
+	case 0xE:
+	{
+		switch (NN)
+		{
+			case 0x9E:
+				// skip next instruction if key number in register X is held
+				if (inputsHeld[V[X] % 16])
+					pc += 2;
+
+				break;
+			case 0xA1:
+				// skip next instruction if key number in register X is NOT held
+				if (!inputsHeld[V[X] % 16])
+					pc += 2;
+				break;
+			default:
+				printUnknownOpcode(opcode);
+				break;
+				
+		}
+		break;
+	}
 	case 0xF:
 	{
 		switch (NN)
@@ -331,8 +358,31 @@ void Chip8::cycle()
 				// copy delay timer into register X
 				V[X] = dt;
 				break;
-				// set delay timer to register X
+			case 0x0A:
+			{
+				// if no key is held, wait (set pc back 2 to repeat same instruction)
+				bool held{ false };
+				uint8_t index{};
+
+				for (int i{ 0 }; i < 16; i++)
+				{
+					if (inputsHeld[i])
+					{
+						held = true;
+						index = i;
+						break;
+					}
+				}
+
+				if (held == true)
+					V[X] = index;
+				else
+					pc -= 2;
+					
+				break;
+			}
 			case 0x15:
+				// set delay timer to register X
 				dt = V[X];
 				break;
 			case 0x18:

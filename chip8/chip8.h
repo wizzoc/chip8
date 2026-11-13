@@ -19,9 +19,10 @@ class Chip8
     uint16_t pc{ ROM_START };
     uint16_t I{};
 
-    // array of memory and array of registers
+    // array of memory, array of registers, held input array
     std::array<uint8_t, 4096> mem{};
     std::array<uint8_t, 16> V{};
+    std::array<bool, 16> inputsHeld{};
 
     // sound timer and delay timer
     uint8_t st{};
@@ -63,6 +64,7 @@ public:
     void renderDisplay() const;
     void printUnknownOpcode(uint16_t opcode) const;
     void tickTimers();
+    void setKeyHeld(int index, bool held);
 };
 
 #endif

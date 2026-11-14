@@ -31,6 +31,8 @@ class Chip8
     // stack pointer
     uint8_t sp{};
 
+    int8_t keyWaitingFor{ -1 };
+
     std::array<bool, 2048> display{};
 
     static constexpr std::array<uint8_t, 80> font{

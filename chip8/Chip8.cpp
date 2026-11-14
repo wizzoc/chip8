@@ -360,25 +360,33 @@ void Chip8::cycle()
 				break;
 			case 0x0A:
 			{
-				// if no key is held, wait (set pc back 2 to repeat same instruction)
-				bool held{ false };
-				uint8_t index{};
-
-				for (int i{ 0 }; i < 16; i++)
+				// wait for a full key press down, then released
+				if (keyWaitingFor == -1)
 				{
-					if (inputsHeld[i])
+					// not waiting on a key yet, look for one being held
+					for (int i{ 0 }; i < 16; i++)
 					{
-						held = true;
-						index = i;
-						break;
+						if (inputsHeld[i])
+						{
+							keyWaitingFor = i;
+							break;
+						}
 					}
+
+					pc -= 2;   // either way run this instruction again next cycle
+				}
+				else if (inputsHeld[keyWaitingFor])
+				{
+					// key still held, keep waiting
+					pc -= 2;
+				}
+				else
+				{
+					// key released, hand it to the program and stop waiting
+					V[X] = keyWaitingFor;
+					keyWaitingFor = -1;
 				}
 
-				if (held == true)
-					V[X] = index;
-				else
-					pc -= 2;
-					
 				break;
 			}
 			case 0x15:

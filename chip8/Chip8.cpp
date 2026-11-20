@@ -110,7 +110,12 @@ void Chip8::setKeyHeld(int index, bool held)
 	inputsHeld[index] = held;
 }
 
-void Chip8::cycle()
+void Chip8::setUsesClassicProfile(bool b)
+{
+	usesClassicProfile = b;
+}
+
+bool Chip8::cycle()
 {
 	uint16_t opcode{ static_cast<uint16_t>((mem[pc] * 256) + mem[pc + 1]) };
 	uint8_t firstNibble{ static_cast<uint8_t>(opcode / 4096) };
@@ -214,12 +219,24 @@ void Chip8::cycle()
 			break;
 		case 1:
 			V[X] = V[X] | V[Y];
+
+			if (usesClassicProfile)
+				V[0xF] = 0;
+
 			break;
 		case 2:
 			V[X] = V[X] & V[Y];
+
+			if (usesClassicProfile)
+				V[0xF] = 0;
+
 			break;
 		case 3:
 			V[X] = V[X] ^ V[Y];
+
+			if (usesClassicProfile)
+				V[0xF] = 0;
+
 			break;
 		case 4:
 			// set special flag if addition wrapped over 255
@@ -238,12 +255,17 @@ void Chip8::cycle()
 			V[0xF] = flag;
 			break;
 		case 6:
+		{
 			// shift right, put bit that fell off into V[0xF]
-			flag = V[X] % 2;
+			uint8_t registerValue{ usesClassicProfile ? V[Y] : V[X] };
 
-			V[X] = V[X] / 2;
+			flag = registerValue % 2;
+			V[X] = registerValue / 2;
+
 			V[0xF] = flag;
+
 			break;
+		}
 		case 7:
 			// same as case 5, reversed
 			if (V[Y] >= V[X])
@@ -253,12 +275,17 @@ void Chip8::cycle()
 			V[0xF] = flag;
 			break;
 		case 0xE:
+		{
 			// shift bits left, set leftmost bit (the wrapped one) to V[0xF]
-			flag = (V[X] / 128) % 2;
-			
-			V[X] *= 2;
+
+			uint8_t registerValue{ usesClassicProfile ? V[Y] : V[X]};
+
+			flag = (registerValue / 128) % 2;
+			V[X] = registerValue * 2;
+
 			V[0xF] = flag;
 			break;
+		}
 		default:
 			printUnknownOpcode(opcode);
 			break;
@@ -325,6 +352,8 @@ void Chip8::cycle()
 				display[(py) * 64 + (px)] ^= bit;
 			}
 		}
+
+		if (usesClassicProfile) return true;
 
 		break;
 	}
@@ -413,6 +442,9 @@ void Chip8::cycle()
 				{
 					mem[I + i] = V[i];
 				}
+
+				if (usesClassicProfile)
+					I += X + 1;
 				break;
 			case 0x65:
 				// copy from memory into registers 0 through X inclusive starting at index register
@@ -420,6 +452,9 @@ void Chip8::cycle()
 				{
 					V[i] = mem[I + i];
 				}
+
+				if (usesClassicProfile)
+					I += X + 1;
 				break;
 			case 0x1E:
 				// add register X to index register
@@ -435,4 +470,6 @@ void Chip8::cycle()
 		printUnknownOpcode(opcode);
 		break;
 	}
+
+	return false;
 }

@@ -24,6 +24,9 @@ class Chip8
     std::array<uint8_t, 16> V{};
     std::array<bool, 16> inputsHeld{};
 
+    // what profile the emulator is using, decided by the user after the rom is loaded
+    bool usesClassicProfile{};
+
     // sound timer and delay timer
     uint8_t st{};
     uint8_t dt{};
@@ -60,13 +63,14 @@ class Chip8
 public:
     Chip8();
     bool loadROM(const std::string& path);
-    void cycle();
+    bool cycle();
     void debugDump() const;
     void dumpMemory(uint16_t pos, int count) const;
     void renderDisplay() const;
     void printUnknownOpcode(uint16_t opcode) const;
     void tickTimers();
     void setKeyHeld(int index, bool held);
+    void setUsesClassicProfile(bool b);
 };
 
 #endif

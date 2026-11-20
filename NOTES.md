@@ -2,7 +2,7 @@
 
 ## Next action
 
-Keyboard input: EX9E (skip if key pressed), EXA1 (skip if key not pressed), FX0A (wait for a key). Map the PC keys `1234 / QWER / ASDF / ZXCV` to the 16-key hex keypad. Then run Pong.
+Sound.
 
 ## Rulings (ambiguous opcodes)
 

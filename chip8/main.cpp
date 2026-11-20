@@ -4,8 +4,41 @@
 #include <string>
 #include <thread>
 #include <chrono>
+#define NOMINMAX
 #include <Windows.h>
+#include <limits>
+#include <cstdlib>
 #include "chip8.h"
+
+// int input validation
+int getValidatedInt(const std::string& prompt, const int lowLimit, const int highLimit)
+{
+    int input{};
+
+    while (true)
+    {
+        std::cout << prompt;
+        std::cin >> input;
+
+        if (std::cin.fail())
+        {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "Invalid input.\n";
+            continue;
+        }
+
+        if (input < lowLimit || input > highLimit)
+        {
+            std::cout << "That input is not within the valid range. Please try again.\n";
+            continue;
+        }
+
+        return input;
+
+    }
+}
+
 
 // indexed by CHIP-8 key number
 constexpr std::array<char, 16> keyMap{
@@ -38,6 +71,9 @@ int main()
         std::getline(std::cin, input);
     }
 
+    int profile{ getValidatedInt("Please input 0 to use a modern profile for this ROM or enter 1 to use a classic profile: ", 0, 1) };
+    chip8.setUsesClassicProfile(profile);
+
     // clear terminal
     std::cout << "\033[2J";
 
@@ -50,7 +86,10 @@ int main()
 
         for (int i{ 0 }; i < 10; i++)
         {
-            chip8.cycle();
+            bool endFrame{ chip8.cycle() };
+
+            if (endFrame)
+                break;
         }
 
         chip8.tickTimers();

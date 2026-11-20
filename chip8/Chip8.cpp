@@ -96,6 +96,11 @@ void Chip8::printUnknownOpcode(uint16_t opcode) const
 	std::cout << "Unknown opcode " << std::hex << opcode << std::dec << " at " << pc - 2 << '\n';
 }
 
+uint8_t Chip8::getSoundTimer() const
+{
+	return st;
+}
+
 void Chip8::tickTimers()
 {
 	if (st > 0)

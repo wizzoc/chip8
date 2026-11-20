@@ -68,6 +68,7 @@ public:
     void dumpMemory(uint16_t pos, int count) const;
     void renderDisplay() const;
     void printUnknownOpcode(uint16_t opcode) const;
+    uint8_t getSoundTimer() const;
     void tickTimers();
     void setKeyHeld(int index, bool held);
     void setUsesClassicProfile(bool b);

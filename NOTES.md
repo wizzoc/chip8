@@ -2,7 +2,7 @@
 
 ## Next action
 
-Sound.
+README and v1.0 release.
 
 ## Rulings (ambiguous opcodes)
 
@@ -27,6 +27,7 @@ Sound.
 - **Renderer:** builds the whole frame in one string (reserved up front), starting with cursor-home (`\033[H`), and prints it once with a flush. No full clear per frame, because that flickers.
 - **Setup in `main`, once:** clear the screen (`\033[2J`) and hide the cursor (`\033[?25l`).
 - **The console window must be at least 128 columns × 33 rows** (maximise it), or the frame scrolls.
+- Classic profile: vF reset, FX55/FX65 advance I, shifts read VY, display wait. Passes Timendus 5-quirks (CHIP-8) under classic; modern unchanged. Corax+, flags and keypad pass under both.
 
 ## Known issues / to do
 

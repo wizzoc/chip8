@@ -80,6 +80,7 @@ int main()
     std::cout << "\033[?25l";
 
     // begin infinite loop to render ~60 frames per second
+    bool soundWasOn{ false };
     while (true)
     {
         checkForInputs(chip8);
@@ -92,7 +93,13 @@ int main()
                 break;
         }
 
+        bool soundIsOn{chip8.getSoundTimer() > 0};
         chip8.tickTimers();
+
+        if (!soundWasOn && soundIsOn)
+            std::cout << "\a";
+
+        soundWasOn = soundIsOn;
 
         chip8.renderDisplay();
 

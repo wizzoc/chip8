@@ -58,6 +58,19 @@ void checkForInputs(Chip8& chip8)
 
 int main()
 {
+    // Turn on ANSI escape code support for this console window
+    HANDLE console{ GetStdHandle(STD_OUTPUT_HANDLE) };
+    DWORD mode{};
+
+    if (!GetConsoleMode(console, &mode) ||
+        !SetConsoleMode(console, mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING))
+    {
+        std::cout << "This console can't display the emulator's screen.\n"
+            "Try running it in Windows Terminal. Press Enter to exit.";
+        std::cin.get();
+        return 1;
+    }
+
     Chip8 chip8{};
     std::string input{};
     std::string message{ "Please type a valid filepath in this directory to load a CHIP8 ROM from: " };

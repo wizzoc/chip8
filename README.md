@@ -74,7 +74,9 @@ Also:
 | Timendus `6-keypad.ch8` | `EX9E`, `EXA1`, `FX0A` press and release | Pass |
 | Timendus `7-beep.ch8` | The sound timer | Beeps (see limitations) |
 
+The test ROMs in `tests/` from Timendus's [CHIP-8 test suite](https://github.com/Timendus/chip8-test-suite) are included unmodified under the GPLv3. The license text is in [`tests/LICENSE-chip8-test-suite.txt`](tests/LICENSE-chip8-test-suite.txt), and their source code is in that repository.
 The custom register-check ROMs are in `tests/`. The Timendus ROMs and Pong aren't included; the suite is linked above.
+
 
 ## Building and running
 
@@ -105,6 +107,8 @@ All machine state lives in one `Chip8` class: 4 KB of memory (font at `0x050`, p
 
 ## About this project
 
-I wrote the interpreter code myself, with one exception: for `FX0A` (wait for a key press and release), Claude (Anthropic) showed me a reference implementation after I got stuck, which I then integrated. Otherwise I used Claude as a mentor and code reviewer: it explained concepts, reviewed my code and plans, and generated the custom register-check test ROMs. The IBM logo ROM is a widely distributed CHIP-8 test program, and the community test suite is by Timendus.
+I wrote the interpreter code myself, with two exceptions: for `FX0A` (wait for a key press and release), Claude (Anthropic) showed me a reference implementation after I got stuck, which I then integrated. 
+Claude also wrote the Windows console setup at the top of `main`, which enables ANSI escape processing.
+Otherwise I used Claude as a mentor and code reviewer: it explained concepts, reviewed my code and plans, and generated the custom register-check test ROMs. The IBM logo ROM is a widely distributed CHIP-8 test program, and the community test suite is by Timendus.
 
 References: Cowgod's *Chip-8 Technical Reference v1.0*; Tobias V. Langhoff, *Guide to making a CHIP-8 emulator*; Timendus, *CHIP-8 test suite*.
